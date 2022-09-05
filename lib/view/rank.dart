@@ -51,22 +51,21 @@ class _RankState extends State<Rank> {
   }
 
   Future<List<ContentsVO>> getConList() async {
-    //log("들어오긴하냐?");
+    //좋아요 기준 랭크에 포함되는 리스트 DB에서 추출
     List<ContentsVO> contents;
 
     var responseWithDio = await dio.get("${URL}RankList.php");
-    //log(responseWithDio.toString());
     contents = (responseWithDio.data).map<ContentsVO>((json) {
       return ContentsVO.fromJson(json);
     }).toList();
 
-    //log("가져오긴하나? ${contents.toString()}");
 
     return contents;
   }
 
   Future<List<LoginKeywordVO>> getTempList() async {
-    log("여긴 들어오냐?");
+    //현재 로그인한 아이디의 등록키워드목록 DB에서 추출
+    log("진입여부 확인");
     List<LoginKeywordVO> tempList;
     var formData = fd.FormData.fromMap({"loginid": loginId,});
 
@@ -77,7 +76,7 @@ class _RankState extends State<Rank> {
       return LoginKeywordVO.fromJson(json);
     }).toList();
 
-    log("이건 가져오긴하냐? ${tempList.toString()}");
+    log("로드데이터 확인 ${tempList.toString()}");
 
     if (tempList.length != 0) {
       kList.clear();
@@ -87,7 +86,7 @@ class _RankState extends State<Rank> {
     } else {
       kList.clear();
     }
-    log("잘 담았어? ${kList.toString()}");
+    log("정상수신 확인 ${kList.toString()}");
     tempList.clear();
 
     return tempList;
@@ -154,11 +153,10 @@ class _RankState extends State<Rank> {
                         Container(
                           decoration: BoxDecoration(
                             border: (() {
+                              // 키워드가 들어간 값 유무 확인
                               bool flag = false;
                               String str = content.conTitle;
-                              //log("제목 : $str");
                               for (String idx in kList) {
-                                //log("키워드 $idx");
                                 if (str.contains(idx)) {
                                   flag = true;
                                 }
@@ -269,7 +267,6 @@ class _RankState extends State<Rank> {
                                                 child: (() {
                                                   bool flag = false;
                                                   String str = content.conTitle;
-
                                                   for (String idx in kList) {
                                                     if (str.contains(idx)) {
                                                       flag = true;

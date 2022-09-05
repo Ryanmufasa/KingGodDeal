@@ -65,36 +65,29 @@ class _SearchResult extends State<SearchResult> {
   }
 
   Future<List<ContentsVO>> getSearchList(String idx) async {
-    //log("들어오긴하냐?");
+     //검색어 포함 값 목록 DB에서 추출
     String searchIdx2 = idx;
     List<ContentsVO> contents;
     var formData = fd.FormData.fromMap({"searchIdx" : searchIdx2});
-    //log("검색인자 : "+searchIdx2);
 
     var responseWithDio = await dio.post("${URL}SearchList.php", data: formData,);
-    //log(responseWithDio.toString());
     contents = (responseWithDio.data).map<ContentsVO>((json) {
       return ContentsVO.fromJson(json);
     }).toList();
-
-    //log("가져오긴하나? ${contents.toString()}");
 
     return contents;
   }
 
   Future<List<LoginKeywordVO>> getTempList() async {
-    //log("여긴 들어오냐?");
+    //현재 로그인한 아이디의 등록키워드목록 DB에서 추출
     List<LoginKeywordVO> tempList;
     var formData = fd.FormData.fromMap({"loginid": loginId,});
 
     var responseWithDio = await dio.post(
       "${URL}LoginKeywordList.php", data: formData,);
-    //log("출력 목록 : ${responseWithDio.toString()}");
     tempList = (responseWithDio.data).map<LoginKeywordVO>((json) {
       return LoginKeywordVO.fromJson(json);
     }).toList();
-
-    //log("이건 가져오긴하냐? ${tempList.toString()}");
 
     if (tempList.length != 0) {
       kList.clear();
@@ -104,7 +97,7 @@ class _SearchResult extends State<SearchResult> {
     } else {
       kList.clear();
     }
-    //log("잘 담았어? ${kList.toString()}");
+
     tempList.clear();
 
     return tempList;
@@ -158,8 +151,8 @@ class _SearchResult extends State<SearchResult> {
           height: 50,
         ),
         Expanded(
-          //color: Colors.yellow,
           child: Obx(() => FutureBuilder<List<ContentsVO>>(
+            // Obx : 검색 후 재검색 시 변경된 결과값을 모니터링
             future: getSearchList(varIdx.srcVO().searchIdx),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData == false) {
